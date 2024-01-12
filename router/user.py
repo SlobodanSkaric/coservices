@@ -1,17 +1,31 @@
 from sqlalchemy.orm import Session
 from db import get_db
 from passlib.context import CryptContext
-from fastapi import Response, Depends, HTTPException, APIRouter
+from fastapi import Response, Depends, HTTPException, APIRouter, status
 from db_models.user_model import User
 import schemes
-router = APIRouter(prefix="/user", tags=["Users"])
+import auth
 
+router = APIRouter(prefix="/user", tags=["Users"])
 
 pass_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+@router.post("/login")
+async def user_login(user_data: schemes.UserLogin, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == user_data.email).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="This user is not existe")
+
+    if not pass_context.verify(user_data.password, user.password):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Password is not corect")
+
+    create_token = auth.create_token({"user_id": user.user_id, "email": user.email})
+
+    return create_token
 
 
-@router.post("/create",response_model=schemes.UserGet)
+@router.post("/create", response_model=schemes.UserGet)
 async def create_user(user: schemes.User, db: Session = Depends(get_db)):
     password = user.password
     password_hash = pass_context.hash(password)
