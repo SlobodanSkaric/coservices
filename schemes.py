@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 
-
+#User
 class User(BaseModel):
     name: str
     lastname: str
@@ -11,6 +11,7 @@ class User(BaseModel):
 
 
 class UserGet(BaseModel):
+    user_id: int
     name: str
     lastname: str
     email: str
@@ -26,3 +27,14 @@ class UserLogin(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+#Coffe
+
+class Coffe(BaseModel):
+    coffe_name: str
+    coffe_addres: str
+    coffe_phone_number: str
+    coffe_email: str
+    coffe_status: int
+
