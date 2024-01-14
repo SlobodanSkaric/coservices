@@ -1,0 +1,18 @@
+# created by virtualenv automatically
+#.gitignore
+
+#Virtual enviroment
+venv/
+
+#Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+#Local development setings
+.env
+
+#Dependency directories
+lib/
+lib64/
