@@ -10,6 +10,10 @@ router = APIRouter(prefix="/coffe", tags=["Coffes"])
 
 @router.post("/create", response_model=schemes.Coffe)
 async def create_coffe(coffe_data: schemes.Coffe, db: Session = Depends(get_db)):
+    coffe_checked_query = db.query(Coffes).filter(Coffes.coffe_name == coffe_data.coffe_name).first()
+
+    if coffe_checked_query:
+        raise HTTPException(status_code=status.HTTP_306_RESERVED, detail="Coffe with this name is existe")
 
     coffe = coffe_data.model_dump()
     coffe_add = Coffes(**coffe)
