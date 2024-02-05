@@ -42,7 +42,6 @@ async def create_user(user: schemes.User, db: Session = Depends(get_db)):
 def get_user(id: int, db: Session = Depends(get_db), curent_user: dict = Depends(auth.auth_token)):
     if curent_user.user_id != id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Is not valid token")
-
     user = db.query(User).filter(User.user_id == id).first()
 
     if not user:
