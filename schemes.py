@@ -9,6 +9,8 @@ class User(BaseModel):
     password: str
     status: Optional[int] = None
 
+    class Config:
+        orm_mode = True
 
 class UserGet(BaseModel):
     user_id: int
@@ -37,4 +39,7 @@ class Coffe(BaseModel):
     coffe_phone_number: str
     coffe_email: str
     coffe_status: int
+
+    class Config:
+        orm_mode = True
 
