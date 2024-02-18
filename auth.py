@@ -5,6 +5,7 @@ from fastapi import Depends,HTTPException,status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from db_models.user_model import User
+import time
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
@@ -38,7 +39,16 @@ def auth_token(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db
     credencial_exeception = HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorize")
 
     get_token_user = virify_token(token, credencial_exeception)
-
+   # token_exp_check = token_expiry()
     user = db.query(User).filter(User.user_id == get_token_user).first()
 
     return user
+
+def token_expiry(token: str = Depends(oauth2_scheme)):
+    token_decode = jwt.decode(token, SECRET_KEY, ALGORITHM)
+
+    token_exp_time = token_decode.get("exp")
+    curent_time = int(datetime.now().timestamp())
+
+    if curent_time > token_exp_time:
+        return False
